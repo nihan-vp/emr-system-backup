@@ -40,7 +40,7 @@ export default function EmbeddedLoginScreen({ onLogin, theme, layout, showToast,
     return (
         <View style={{ flex: 1, backgroundColor: theme.bg }}>
             <KeyboardAvoidingView behavior={'padding'} style={{ flex: 1 }}>
-                <Pressable onPress={Keyboard.dismiss}>
+                <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: layout.gutter }}>
                         <View style={[styles.glowTop, { backgroundColor: theme.primary, opacity: 0.1 }]} />
                         <View style={[styles.glowBottom, { backgroundColor: '#10b981', opacity: 0.1 }]} />

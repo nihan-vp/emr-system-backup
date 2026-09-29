@@ -90,7 +90,7 @@ export default function LoginScreen() {
   const currentRoleObj = ROLE_OPTIONS.find(opt => opt.value === selectedRole);
 
   return (
-    <Pressable onPress={() => { Keyboard.dismiss(); setIsDropdownOpen(false); }}>
+    <Pressable style={{ flex: 1 }} onPress={() => { Keyboard.dismiss(); setIsDropdownOpen(false); }}>
       <View style={styles.root}>
         <StatusBar barStyle="dark-content" />
         
