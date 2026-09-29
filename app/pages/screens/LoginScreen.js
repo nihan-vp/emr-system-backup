@@ -8,7 +8,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
+  Pressable,
   View,
   Keyboard,
   Dimensions,
@@ -90,7 +90,7 @@ export default function LoginScreen() {
   const currentRoleObj = ROLE_OPTIONS.find(opt => opt.value === selectedRole);
 
   return (
-    <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setIsDropdownOpen(false); }}>
+    <Pressable onPress={() => { Keyboard.dismiss(); setIsDropdownOpen(false); }}>
       <View style={styles.root}>
         <StatusBar barStyle="dark-content" />
         
@@ -214,7 +214,7 @@ export default function LoginScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
-    </TouchableWithoutFeedback>
+    </Pressable>
   );
 }
 

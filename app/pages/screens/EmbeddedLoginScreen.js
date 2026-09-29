@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Animated, Keyboard, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Keyboard, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, Pressable, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Activity, Eye, EyeOff, Lock, Mail } from 'lucide-react-native';
 
@@ -40,7 +40,7 @@ export default function EmbeddedLoginScreen({ onLogin, theme, layout, showToast,
     return (
         <View style={{ flex: 1, backgroundColor: theme.bg }}>
             <KeyboardAvoidingView behavior={'padding'} style={{ flex: 1 }}>
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <Pressable onPress={Keyboard.dismiss}>
                     <View style={{ flex: 1, justifyContent: 'center', padding: layout.gutter }}>
                         <View style={[styles.glowTop, { backgroundColor: theme.primary, opacity: 0.1 }]} />
                         <View style={[styles.glowBottom, { backgroundColor: '#10b981', opacity: 0.1 }]} />
@@ -89,7 +89,7 @@ export default function EmbeddedLoginScreen({ onLogin, theme, layout, showToast,
                             </View>
                         </View>
                     </View>
-                </TouchableWithoutFeedback>
+                </Pressable>
             </KeyboardAvoidingView>
         </View>
     );
