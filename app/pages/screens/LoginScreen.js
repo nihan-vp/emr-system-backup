@@ -18,12 +18,13 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MotiView, MotiText } from 'moti';
+import { MotiView } from 'moti';
 import {
   Eye, EyeOff, Lock, Stethoscope,
   User, ArrowRight, ShieldCheck, FlaskConical,
   Pill, Activity,
 } from 'lucide-react-native';
+import SplashScreen from '../../components/loaders/SplashScreen';
 import { ROLE_ROUTES, validateRoleLogin } from '../../auth/roleAuth';
 
 const { width, height } = Dimensions.get('window');
@@ -118,6 +119,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [focusedInput, setFocusedInput] = useState(null);
+  const [showSplash, setShowSplash] = useState(true);
 
   const role = ROLES[selectedRoleIdx];
   const RoleIcon = role.icon;
@@ -134,6 +136,11 @@ export default function LoginScreen() {
     loop.start();
     return () => loop.stop();
   }, [pulse]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowSplash(false), 2200);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleRoleChange = (idx) => {
     setSelectedRoleIdx(idx);
@@ -159,6 +166,15 @@ export default function LoginScreen() {
     }
     navigation.replace(result.routeName);
   };
+
+  if (showSplash) {
+    return (
+      <SplashScreen
+        theme={{ mode: 'dark', primary: '#6366f1', text: '#f1f5f9', textDim: '#64748b' }}
+        onFinish={() => setShowSplash(false)}
+      />
+    );
+  }
 
   return (
     <View style={styles.root}>
@@ -199,14 +215,15 @@ export default function LoginScreen() {
                 </LinearGradient>
               </Animated.View>
 
-              <MotiText
+              <MotiView
                 from={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ type: 'spring', delay: 200 }}
-                style={styles.brandText}
               >
-                Suhaim<Text style={{ color: role.accent }}>Soft</Text>
-              </MotiText>
+                <Text style={styles.brandText}>
+                  Suhaim<Text style={{ color: role.accent }}>Soft</Text>
+                </Text>
+              </MotiView>
               <Text style={styles.brandSub}>Healthcare Intelligence Portal</Text>
             </MotiView>
 
@@ -373,7 +390,6 @@ const styles = StyleSheet.create({
   gridOverlay: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0.03,
-    backgroundImage: undefined, // RN doesn't support this, just placeholder
   },
 
   scroll: {
