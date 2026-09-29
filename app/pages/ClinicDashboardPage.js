@@ -30,7 +30,6 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import AppointmentEditModal from '../components/commons/AppointmentEditModal';
 import PrescriptionMedicineModal from '../components/commons/PrescriptionMedicineModal';
 import ToastNotification from '../components/commons/ToastNotification';
-import SplashScreen from '../components/loaders/SplashScreen';
 import SideMenu from '../components/navbars/SideMenu';
 import { fetchClinicState, replaceClinicCollection } from '../utils/clinicApi';
 import { buildMedicineRecord, findMatchingMedicine, sanitizeMedicineDraft } from '../utils/medicine';
@@ -1523,7 +1522,7 @@ const VitalsScreen = ({ theme, onBack, patient, onSaveVitals, showToast, layout 
                 <View style={{ backgroundColor: '#fff7ed', padding: 15, borderRadius: 12, borderWidth: 1, borderColor: '#ffedd5', marginBottom: 25, flexDirection: 'row', gap: 10 }}>
                     <AlertCircle size={20} color="#c2410c" />
                     <Text style={{ color: '#9a3412', fontSize: 13, flex: 1, lineHeight: 20 }}>
-                        <Text style={{fontWeight: 'bold'}}>Note:</Text> Updating vitals here will update the patient&apos;s current record.
+                        <Text style={{fontWeight: 'bold'}}>Note:</Text>{" Updating vitals here will update the patient's current record."}
                     </Text>
                 </View>
 
@@ -2630,7 +2629,7 @@ const MainApp = ({ skipLogin = false, onLogoutExternal }) => {
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const [isLoggedIn, setIsLoggedIn] = useState(skipLogin);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading] = useState(false);
     const [currentScreen, setCurrentScreen] = useState('home');
     const [menuVisible, setMenuVisible] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);

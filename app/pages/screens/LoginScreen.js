@@ -24,7 +24,7 @@ import {
 import { ROLE_OPTIONS, ROLE_ROUTES, validateRoleLogin } from '../../auth/roleAuth';
 import SplashScreen from '../../components/loaders/SplashScreen';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const navigation = useNavigation();

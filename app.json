@@ -4,11 +4,6 @@
     "slug": "suhaimast",
     "version": "1.0.0",
     "icon": "./assets/images/ic_launcher_monochrome.png",
-    "splash": {
-      "image": "./assets/images/ic_launcher_monochrome.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ic_launcher_monochrome.png",
@@ -17,7 +12,18 @@
       "package": "com.suhaimsoft.suhaimast"
     },
     "plugins": [
-      "@react-native-community/datetimepicker"
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/ic_launcher_monochrome.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-font",
+      "expo-router",
+      "expo-web-browser"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer-core';
+import { launch as puppeteerLaunch } from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 
 let browserInstance = null;
@@ -24,7 +24,7 @@ const getBrowser = async () => {
       console.log('📍 Chromium path cached:', chromiumPath);
     }
 
-    browserInstance = await puppeteer.launch({
+    browserInstance = await puppeteerLaunch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: chromiumPath,

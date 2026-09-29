@@ -1,15 +1,14 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Alert, Keyboard, KeyboardAvoidingView, Linking, Modal, Platform, ScrollView, Switch, Text, TextInput, TouchableOpacity, View, Dimensions } from 'react-native';
+import { Alert, Keyboard, KeyboardAvoidingView, Linking, Modal, Platform, ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ArrowLeft, Cake, Calendar, Check, ChevronDown, Clock, Droplet, MessageCircle, Pencil, Phone, Plus, Search, Trash2, User, X, Mail, ClipboardList, Activity, HeartPulse, Weight, Thermometer, CheckCircle2 } from 'lucide-react-native';
+import { ArrowLeft, Cake, Calendar, Check, ChevronDown, Clock, Droplet, MessageCircle, Pencil, Phone, Plus, Search, Trash2, User, X, Mail, ClipboardList, Activity, HeartPulse, Weight, Thermometer } from 'lucide-react-native';
 import { BLOOD_GROUPS, INITIAL_FORM_STATE } from '../../constants/medical';
 import { getMedicalModalTheme } from '../../constants/tableTheme';
 import { GenderSelector, InputGroup } from '../../components/commons/FormControls';
 import { calculateAge } from '../../utils/patient.js';
 
-const { width } = Dimensions.get('window');
 
 export default function AppointmentScreen({ theme, onBack, form, setForm, appointments, setAppointments, patients, setPatients, onSelectPatient, onEditAppointment, viewMode, setViewMode, showToast, styles }) {
     const insets = useSafeAreaInsets();
@@ -323,7 +322,7 @@ export default function AppointmentScreen({ theme, onBack, form, setForm, appoin
                                 <ClipboardList size={40} color={theme.textDim} />
                             </View>
                             <Text style={{ fontSize: 20, fontWeight: '900', color: theme.text }}>No Upcoming Appointments</Text>
-                            <Text style={{ color: theme.textDim, fontSize: 15, marginTop: 8 }}>Click the '+' icon to add a new booking.</Text>
+                            <Text style={{ color: theme.textDim, fontSize: 15, marginTop: 8 }}>{"Click the '+' icon to add a new booking."}</Text>
                         </View>
                     )}
                 </ScrollView>

@@ -34,7 +34,7 @@ export default function VitalsScreen({ theme, onBack, patient, onSaveVitals, sho
                 tempUnit: latestVitals.tempUnit || 'C'
             });
         }
-    }, [patient, editId]);
+    }, [patient, editId, latestVitals]);
 
     const resetForm = () => {
         setForm({ sys: '', dia: '', pulse: '', spo2: '', weight: '', temp: '', tempUnit: 'C' });
@@ -277,7 +277,7 @@ export default function VitalsScreen({ theme, onBack, patient, onSaveVitals, sho
                             </View>
                             <Text style={{ color: theme.text, fontSize: 18, fontWeight: '900', marginBottom: 5 }}>No Vitals Logged</Text>
                             <Text style={{ color: theme.textDim, fontSize: 13, fontWeight: '600', textAlign: 'center' }}>
-                                Start building {patient?.name}'s timeline by recording their first vitals check-up today.
+                                Start building {patient?.name}{"'s timeline by recording their first vitals check-up today."}
                             </Text>
                         </View>
                     ) : (

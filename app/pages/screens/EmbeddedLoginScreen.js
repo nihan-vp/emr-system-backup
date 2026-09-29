@@ -51,7 +51,7 @@ export default function EmbeddedLoginScreen({ onLogin, theme, layout, showToast,
                                     <Activity size={50} color={theme.primary} />
                                 </Animated.View>
                                 <Text style={{ fontSize: 32, fontWeight: 'bold', color: theme.text, textAlign: 'center' }}>Suhaim Soft</Text>
-                                <Text style={{ fontSize: 16, color: theme.textDim, marginTop: 5, textAlign: 'center' }}>Doctor&apos;s Portal v2.0</Text>
+                                <Text style={{ fontSize: 16, color: theme.textDim, marginTop: 5, textAlign: 'center' }}>{"Doctor's Portal v2.0"}</Text>
                             </Animated.View>
 
                             <Animated.View style={{ gap: 20, width: '100%', opacity: fadeAnim, transform: [{ translateY: fadeAnim.interpolate({ inputRange: [0, 1], outputRange: [50, 0] }) }] }}>

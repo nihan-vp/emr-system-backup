@@ -1,21 +1,20 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { 
-    ArrowLeft, Clipboard, FilePlus, HeartPulse, Phone, 
-    Search, Stethoscope, FileText, Download, Activity, 
+    ArrowLeft, Clipboard, FilePlus, HeartPulse, 
+    Search, FileText, Download, Activity, 
     FileType, ActivitySquare, UserX, X, Edit, Trash2, Eye, Share2, Printer
 } from 'lucide-react-native';
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { 
+import {
     ScrollView, Text, TextInput, TouchableOpacity, 
-    View, Animated, Easing, StyleSheet, Alert, Dimensions, Modal, Platform
+    View, Animated, Easing, StyleSheet, Alert, Modal
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { WebView } from 'react-native-webview';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
-const { width, height } = Dimensions.get('window');
 
 // --- Utility Functions ---
 const formatDateTime = (dateLike) => {
@@ -201,7 +200,7 @@ export default function PatientHistoryScreen({
             if (typeof showToast === 'function') {
                 showToast('Shared', 'Patient history PDF share opened.', 'success');
             }
-        } catch (error) {
+        } catch (_error) {
             Alert.alert('Error', 'Could not generate PDF.');
         } finally {
             setIsGeneratingPDF(false);
@@ -517,7 +516,7 @@ export default function PatientHistoryScreen({
             if (FileSystem.documentDirectory) {
                 try {
                     await FileSystem.moveAsync({ from: uri, to: newUri });
-                } catch (e) {
+                } catch (_e) {
                     // If move fails, fall back to original uri
                 }
             }
@@ -526,7 +525,7 @@ export default function PatientHistoryScreen({
             if (typeof showToast === 'function') {
                 showToast('Shared', 'Prescription PDF share opened.', 'success');
             }
-        } catch (error) {
+        } catch (_error) {
             Alert.alert('Error', 'Could not generate Prescription PDF.');
         } finally {
             setIsGeneratingPDF(false);
@@ -538,7 +537,7 @@ export default function PatientHistoryScreen({
             setIsGeneratingPDF(true);
             const html = getPrescriptionHTML(rx);
             await Print.printAsync({ html });
-        } catch (error) {
+        } catch (_error) {
             Alert.alert('Error', 'Could not print Prescription.');
         } finally {
             setIsGeneratingPDF(false);
@@ -579,7 +578,7 @@ export default function PatientHistoryScreen({
             if (FileSystem.documentDirectory) {
                 try {
                     await FileSystem.moveAsync({ from: uri, to: newUri });
-                } catch (e) {
+                } catch (_e) {
                     // ignore and use original uri
                 }
             }
@@ -592,7 +591,7 @@ export default function PatientHistoryScreen({
             if (typeof showToast === 'function') {
                 showToast('Shared', 'Prescription PDF ready to send via WhatsApp.', 'success');
             }
-        } catch (error) {
+        } catch (_error) {
             Alert.alert('Error', 'Could not prepare Prescription PDF for sharing.');
         } finally {
             setIsGeneratingPDF(false);
@@ -621,7 +620,7 @@ export default function PatientHistoryScreen({
             </LinearGradient>
             <Text style={[localStyles.emptySearchTitle, { color: theme.text }]}>No Results Found</Text>
             <Text style={[localStyles.emptySearchSub, { color: theme.textDim }]}>
-                We couldn't find any match. Please check the spelling or try a different ID/Number.
+                {"We couldn't find any match. Please check the spelling or try a different ID/Number."}
             </Text>
             <TouchableOpacity onPress={() => setSearchQuery('')} activeOpacity={0.8}>
                 <LinearGradient colors={['#f43f5e', '#e11d48']} style={localStyles.clearSearchBtn}>
@@ -1074,7 +1073,7 @@ export default function PatientHistoryScreen({
                     <View style={[localStyles.confirmCard, { backgroundColor: theme.cardBg, borderColor: theme.border }]}> 
                         <Text style={[localStyles.confirmTitle, { color: theme.text }]}>Are you sure?</Text>
                         <Text style={[localStyles.confirmText, { color: theme.textDim }]}> 
-                            You are about to share this patient's prescription PDF via WhatsApp.
+                            {"You are about to share this patient's prescription PDF via WhatsApp."}
                         </Text>
                         <View style={localStyles.confirmButtonsRow}>
                             <TouchableOpacity

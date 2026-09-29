@@ -28,7 +28,7 @@ import {
     Weight,
     X
 } from 'lucide-react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     Alert,
     Animated,
@@ -40,7 +40,6 @@ import {
     Platform,
     ScrollView,
     StyleSheet,
-    Switch,
     Text,
     TextInput,
     TouchableOpacity,
@@ -155,7 +154,7 @@ const TemplateScreen = ({
 
     // Editor State - Added 'nextVisitInvestigations' and 'referral'
     const [editorForm, setEditorForm] = useState(createEmptyTemplateDraft);
-    const [saveAsTemplate, setSaveAsTemplate] = useState(false);
+    const saveAsTemplate = false;
     const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
 
     // State to toggle referral input visibility
@@ -318,7 +317,7 @@ const TemplateScreen = ({
                 onPrescriptionTemplateApplied();
             }
         }
-    }, [isPrescription, initialPrescriptionTemplate]);
+    }, [isPrescription, initialPrescriptionTemplate, applyTemplate, onPrescriptionTemplateApplied]);
 
     const filteredTemplates = templates.filter((template) => {
         const query = searchQuery.toLowerCase();
@@ -356,7 +355,7 @@ const TemplateScreen = ({
     const tableMinWidth = safeLayout.isTablet ? 1160 : 940;
     const popupHeight = safeLayout.isTablet ? height * 0.82 : height * 0.86;
 
-    const applyTemplate = (template) => {
+    const applyTemplate = useCallback((template) => {
         setEditorForm((prev) => ({
             ...prev,
             diagnosis: template.diagnosis || prev.diagnosis,
@@ -372,7 +371,7 @@ const TemplateScreen = ({
         setShowTemplatePicker(false);
         setTemplatePickerSearch('');
         showToast('Applied', `${template.name} loaded successfully`, 'info');
-    };
+    }, [showToast]);
 
     const handleEdit = (item) => {
         setEditorForm({
