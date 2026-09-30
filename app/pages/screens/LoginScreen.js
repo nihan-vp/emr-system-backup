@@ -1,9 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ActivityIndicator,
-  Animated,
-  Dimensions,
-  Easing,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -18,95 +15,21 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MotiView } from 'moti';
 import {
   Eye, EyeOff, Lock, Stethoscope,
   User, ArrowRight, ShieldCheck, FlaskConical,
-  Pill, Activity, HeartPulse,
+  Pill, Briefcase, Activity
 } from 'lucide-react-native';
 import SplashScreen from '../../components/loaders/SplashScreen';
 import { ROLE_ROUTES, validateRoleLogin } from '../../auth/roleAuth';
 
-const { width, height } = Dimensions.get('window');
-
-/* ─── Medical color theme ──────────────────────────────────────────────── */
-const MED = {
-  bg:       '#050d14',       // Deep navy
-  surface:  '#0a1628',       // Card surface
-  card:     '#0d1e33',       // Input background
-  border:   '#1a3a5c',       // Subtle border
-  teal:     '#14b8a6',       // Primary teal
-  tealDark: '#0d9488',
-  cyan:     '#06b6d4',
-  green:    '#22c55e',
-  blue:     '#3b82f6',
-  purple:   '#8b5cf6',
-  amber:    '#f59e0b',
-  text:     '#e2f4f1',
-  textDim:  '#4a7a8a',
-  error:    '#f87171',
-};
-
-/* ─── Role definitions ─────────────────────────────────────────────────── */
 const ROLES = [
-  { key: ROLE_ROUTES.DOCTOR,   label: 'Doctor',   icon: Stethoscope,  gradient: [MED.teal, MED.cyan],       accent: MED.teal,   glow: '#14b8a640', hint: 'doctor / 1234' },
-  { key: ROLE_ROUTES.NURSE,    label: 'Nurse',    icon: HeartPulse,   gradient: [MED.green, '#16a34a'],     accent: MED.green,  glow: '#22c55e40', hint: 'nurse / 1234' },
-  { key: ROLE_ROUTES.LAB,      label: 'Lab',      icon: FlaskConical, gradient: [MED.blue, MED.purple],     accent: MED.blue,   glow: '#3b82f640', hint: 'lab / 1234' },
-  { key: ROLE_ROUTES.PHARMACY, label: 'Pharmacy', icon: Pill,         gradient: [MED.amber, '#ef4444'],     accent: MED.amber,  glow: '#f59e0b40', hint: 'pharmacy / 1234' },
+  { key: ROLE_ROUTES.DOCTOR,   label: 'Doctor',   icon: Stethoscope,  accent: '#0ea5e9' },
+  { key: ROLE_ROUTES.NURSE,    label: 'Nurse',    icon: Activity,     accent: '#10b981' },
+  { key: ROLE_ROUTES.LAB,      label: 'Lab',      icon: FlaskConical, accent: '#8b5cf6' },
+  { key: ROLE_ROUTES.PHARMACY, label: 'Pharmacy', icon: Pill,         accent: '#f59e0b' },
 ];
 
-/* ─── ECG Pulse animation strip ───────────────────────────────────────── */
-function PulseBar({ color }) {
-  const anim = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(anim, { toValue: 1, duration: 1600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(anim, { toValue: 0, duration: 1600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      ])
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [anim]);
-
-  const translateX = anim.interpolate({ inputRange: [0, 1], outputRange: [-width, width] });
-  return (
-    <View style={{ height: 1.5, backgroundColor: MED.border, overflow: 'hidden', borderRadius: 2, marginVertical: 20 }}>
-      <Animated.View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, transform: [{ translateX }] }}>
-        <LinearGradient colors={['transparent', color, color, 'transparent']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ flex: 1 }} />
-      </Animated.View>
-    </View>
-  );
-}
-
-/* ─── Floating medical orb ────────────────────────────────────────────── */
-function MedOrb({ color, size, x, y, duration, delay }) {
-  const anim = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(anim, { toValue: 1, duration, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(anim, { toValue: 0, duration, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      ])
-    );
-    const t = setTimeout(() => loop.start(), delay);
-    return () => { clearTimeout(t); loop.stop(); };
-  }, [anim, delay, duration]);
-
-  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [0, -24] });
-  const opacity    = anim.interpolate({ inputRange: [0, 1], outputRange: [0.08, 0.22] });
-  const scale      = anim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.12] });
-
-  return (
-    <Animated.View style={[styles.orb, {
-      width: size, height: size, borderRadius: size / 2,
-      backgroundColor: color, left: x, top: y,
-      opacity, transform: [{ translateY }, { scale }],
-    }]} />
-  );
-}
-
-/* ─── Main component ───────────────────────────────────────────────────── */
 export default function LoginScreen() {
   const navigation = useNavigation();
   const [roleIdx, setRoleIdx]         = useState(0);
@@ -118,27 +41,13 @@ export default function LoginScreen() {
   const [focused, setFocused]         = useState(null);
   const [showSplash, setShowSplash]   = useState(true);
 
-  const role    = ROLES[roleIdx];
+  const role = ROLES[roleIdx];
   const RoleIcon = role.icon;
 
-  /* Splash timer */
   useEffect(() => {
-    const t = setTimeout(() => setShowSplash(false), 2200);
+    const t = setTimeout(() => setShowSplash(false), 2000);
     return () => clearTimeout(t);
   }, []);
-
-  /* Logo pulse */
-  const pulse = useRef(new Animated.Value(1)).current;
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, { toValue: 1.07, duration: 1400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(pulse, { toValue: 1,    duration: 1400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      ])
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [pulse]);
 
   const changeRole = (idx) => {
     setRoleIdx(idx);
@@ -151,7 +60,7 @@ export default function LoginScreen() {
     Keyboard.dismiss();
     setError('');
     if (!username.trim() || !password) {
-      setError('Please fill in username and password.');
+      setError('Please enter your username and password.');
       return;
     }
     setLoading(true);
@@ -165,7 +74,7 @@ export default function LoginScreen() {
   if (showSplash) {
     return (
       <SplashScreen
-        theme={{ mode: 'dark', primary: MED.teal, text: MED.text, textDim: MED.textDim }}
+        theme={{ mode: 'light', primary: role.accent, text: '#0f172a', textDim: '#64748b' }}
         onFinish={() => setShowSplash(false)}
       />
     );
@@ -173,14 +82,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="light-content" backgroundColor={MED.bg} />
-      <LinearGradient colors={[MED.bg, '#060f1c', MED.bg]} style={StyleSheet.absoluteFill} />
-
-      {/* ── Medical orbs ── */}
-      <MedOrb color={MED.teal}   size={280} x={-80}       y={-80}         duration={4200} delay={0}    />
-      <MedOrb color={MED.cyan}   size={180} x={width*0.6} y={-50}         duration={5000} delay={700}  />
-      <MedOrb color={MED.green}  size={150} x={-30}       y={height*0.5}  duration={3800} delay={300}  />
-      <MedOrb color={MED.blue}   size={120} x={width*0.7} y={height*0.65} duration={4600} delay={1100} />
+      <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
@@ -190,100 +92,51 @@ export default function LoginScreen() {
             showsVerticalScrollIndicator={false}
           >
 
-            {/* ── Logo & brand ── */}
-            <MotiView
-              from={{ opacity: 0, translateY: -32 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: 'timing', duration: 650 }}
-              style={styles.header}
-            >
-              {/* Outer glow ring */}
-              <Animated.View style={[styles.logoGlow, { backgroundColor: role.glow, transform: [{ scale: pulse }] }]} />
-              <LinearGradient colors={role.gradient} style={styles.logoRing}>
-                <View style={styles.logoInner}>
-                  <RoleIcon size={28} color="#fff" strokeWidth={2} />
-                </View>
+            {/* Header */}
+            <View style={styles.header}>
+              <LinearGradient colors={[role.accent, role.accent + '99']} style={styles.logoBox}>
+                <RoleIcon size={32} color="#fff" strokeWidth={2} />
               </LinearGradient>
+              <Text style={styles.brandTitle}>
+                Suhaim<Text style={{ color: role.accent }}>Soft</Text>
+              </Text>
+              <Text style={styles.brandSubtitle}>Healthcare Intelligence Portal</Text>
+            </View>
 
-              <View style={styles.brandRow}>
-                <Text style={styles.brand}>Suhaim</Text>
-                <Text style={[styles.brand, { color: role.accent }]}>Soft</Text>
-                <View style={[styles.medBadge, { backgroundColor: role.accent + '25', borderColor: role.accent + '60' }]}>
-                  <Text style={[styles.medBadgeText, { color: role.accent }]}>EMR</Text>
-                </View>
-              </View>
-              <Text style={styles.tagline}>Healthcare Intelligence Portal</Text>
-            </MotiView>
-
-            {/* ── Role tabs ── */}
-            <MotiView
-              from={{ opacity: 0, translateY: 16 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: 'timing', duration: 600, delay: 180 }}
-              style={styles.tabsRow}
-            >
-              {ROLES.map((r, i) => {
-                const Icon = r.icon;
-                const active = i === roleIdx;
-                return (
-                  <TouchableOpacity
-                    key={r.key}
-                    onPress={() => changeRole(i)}
-                    activeOpacity={0.75}
-                    style={[styles.tab, active && { borderColor: r.accent }]}
-                  >
-                    {active && (
-                      <LinearGradient
-                        colors={[r.gradient[0] + '30', r.gradient[1] + '18']}
-                        style={StyleSheet.absoluteFill}
-                        borderRadius={14}
-                      />
-                    )}
-                    <Icon size={17} color={active ? r.accent : MED.textDim} strokeWidth={2} />
-                    <Text style={[styles.tabLabel, active && { color: r.accent }]}>{r.label}</Text>
-                    {active && <View style={[styles.tabDot, { backgroundColor: r.accent }]} />}
-                  </TouchableOpacity>
-                );
-              })}
-            </MotiView>
-
-            {/* ── Login card ── */}
-            <MotiView
-              from={{ opacity: 0, translateY: 30 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: 'timing', duration: 680, delay: 260 }}
-              style={styles.card}
-            >
-              {/* Accent top border */}
-              <LinearGradient
-                colors={role.gradient}
-                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                style={styles.cardTopBar}
-              />
-
-              <View style={styles.cardHeader}>
-                <View>
-                  <Text style={styles.cardTitle}>Welcome Back</Text>
-                  <Text style={[styles.cardSub, { color: role.accent }]}>{role.label} Portal</Text>
-                </View>
-                <View style={[styles.roleChip, { backgroundColor: role.glow, borderColor: role.accent + '50' }]}>
-                  <ShieldCheck size={14} color={role.accent} />
-                  <Text style={[styles.roleChipText, { color: role.accent }]}>Secure</Text>
-                </View>
+            {/* Main Card */}
+            <View style={styles.card}>
+              
+              {/* Role Tabs */}
+              <View style={styles.tabsContainer}>
+                {ROLES.map((r, i) => {
+                  const Icon = r.icon;
+                  const active = i === roleIdx;
+                  return (
+                    <TouchableOpacity
+                      key={r.key}
+                      onPress={() => changeRole(i)}
+                      style={[styles.tab, active && { backgroundColor: r.accent + '15', borderColor: r.accent }]}
+                    >
+                      <Icon size={16} color={active ? r.accent : '#94a3b8'} />
+                      <Text style={[styles.tabText, active && { color: r.accent, fontWeight: '700' }]}>
+                        {r.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
 
-              {/* ECG divider */}
-              <PulseBar color={role.accent} />
+              <Text style={styles.loginTitle}>Sign In</Text>
 
               {/* Username */}
-              <View style={styles.field}>
-                <Text style={[styles.fieldLabel, { color: focused === 'u' ? role.accent : MED.textDim }]}>USERNAME</Text>
-                <View style={[styles.inputWrap, focused === 'u' && { borderColor: role.accent, backgroundColor: role.card }]}>
-                  <User size={17} color={focused === 'u' ? role.accent : MED.textDim} />
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>USERNAME</Text>
+                <View style={[styles.inputBox, focused === 'u' && { borderColor: role.accent }]}>
+                  <User size={18} color={focused === 'u' ? role.accent : '#94a3b8'} />
                   <TextInput
                     style={styles.input}
-                    placeholder={role.key.toLowerCase()}
-                    placeholderTextColor={MED.textDim}
+                    placeholder={`${role.key.toLowerCase()}`}
+                    placeholderTextColor="#94a3b8"
                     value={username}
                     onChangeText={(v) => { setUsername(v); setError(''); }}
                     onFocus={() => setFocused('u')}
@@ -295,83 +148,56 @@ export default function LoginScreen() {
               </View>
 
               {/* Password */}
-              <View style={styles.field}>
-                <Text style={[styles.fieldLabel, { color: focused === 'p' ? role.accent : MED.textDim }]}>PASSWORD</Text>
-                <View style={[styles.inputWrap, focused === 'p' && { borderColor: role.accent, backgroundColor: role.card }]}>
-                  <Lock size={17} color={focused === 'p' ? role.accent : MED.textDim} />
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>PASSWORD</Text>
+                <View style={[styles.inputBox, focused === 'p' && { borderColor: role.accent }]}>
+                  <Lock size={18} color={focused === 'p' ? role.accent : '#94a3b8'} />
                   <TextInput
                     style={styles.input}
                     placeholder="••••••••"
-                    placeholderTextColor={MED.textDim}
+                    placeholderTextColor="#94a3b8"
                     secureTextEntry={!showPwd}
                     value={password}
                     onChangeText={(v) => { setPassword(v); setError(''); }}
                     onFocus={() => setFocused('p')}
                     onBlur={() => setFocused(null)}
                   />
-                  <TouchableOpacity onPress={() => setShowPwd(!showPwd)} hitSlop={12}>
-                    {showPwd
-                      ? <EyeOff size={17} color={MED.textDim} />
-                      : <Eye    size={17} color={role.accent} />
-                    }
+                  <TouchableOpacity onPress={() => setShowPwd(!showPwd)} style={{ padding: 4 }}>
+                    {showPwd ? <EyeOff size={18} color="#94a3b8" /> : <Eye size={18} color={role.accent} />}
                   </TouchableOpacity>
                 </View>
               </View>
 
-              {/* Demo hint */}
-              <View style={styles.hintRow}>
-                <Activity size={12} color={MED.textDim} />
-                <Text style={styles.hint}>Demo credentials: {role.hint}</Text>
-              </View>
-
-              {/* Error */}
+              {/* Error Box */}
               {!!error && (
-                <MotiView
-                  from={{ opacity: 0, translateY: -6 }}
-                  animate={{ opacity: 1, translateY: 0 }}
-                  transition={{ type: 'spring', damping: 15 }}
-                  style={styles.errorBox}
-                >
+                <View style={styles.errorBox}>
                   <Text style={styles.errorText}>{error}</Text>
-                </MotiView>
+                </View>
               )}
 
-              {/* Login button */}
+              {/* Login Button */}
               <TouchableOpacity
                 onPress={handleLogin}
                 disabled={loading}
-                activeOpacity={0.82}
-                style={[styles.btnWrap, loading && { opacity: 0.65 }]}
+                style={[styles.btnWrapper, loading && { opacity: 0.7 }]}
               >
-                <LinearGradient
-                  colors={role.gradient}
-                  start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                  style={styles.btn}
-                >
-                  {loading
-                    ? <ActivityIndicator color="#fff" size="small" />
-                    : (
-                      <View style={styles.btnRow}>
-                        <Text style={styles.btnText}>Sign In Securely</Text>
-                        <ArrowRight size={18} color="#fff" strokeWidth={2.5} />
-                      </View>
-                    )
-                  }
+                <LinearGradient colors={[role.accent, role.accent + 'ee']} style={styles.btn}>
+                  {loading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <View style={styles.btnRow}>
+                      <Text style={styles.btnText}>Secure Login</Text>
+                      <ArrowRight size={20} color="#fff" />
+                    </View>
+                  )}
                 </LinearGradient>
               </TouchableOpacity>
-            </MotiView>
+            </View>
 
-            {/* Footer */}
-            <MotiView
-              from={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 700, duration: 600 }}
-              style={styles.footer}
-            >
-              <View style={[styles.footerDot, { backgroundColor: MED.teal }]} />
-              <Text style={styles.footerText}>End-to-end encrypted  ·  EMR v2.0</Text>
-              <View style={[styles.footerDot, { backgroundColor: MED.teal }]} />
-            </MotiView>
+            <View style={styles.footer}>
+              <ShieldCheck size={14} color="#94a3b8" />
+              <Text style={styles.footerText}>Enterprise Grade Security</Text>
+            </View>
 
           </ScrollView>
         </Pressable>
@@ -381,111 +207,58 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: MED.bg },
+  root: { flex: 1, backgroundColor: '#f8fafc' },
+  scroll: { flexGrow: 1, padding: 24, justifyContent: 'center' },
 
-  orb: { position: 'absolute' },
-
-  scroll: {
-    flexGrow: 1,
-    paddingHorizontal: 20,
-    paddingTop: 56,
-    paddingBottom: 36,
-    justifyContent: 'center',
-  },
-
-  /* ── Header ── */
-  header: { alignItems: 'center', marginBottom: 28 },
-  logoGlow: {
-    position: 'absolute', width: 110, height: 110, borderRadius: 55,
-    top: -15,
-  },
-  logoRing: {
-    width: 80, height: 80, borderRadius: 26, padding: 3,
+  header: { alignItems: 'center', marginBottom: 32 },
+  logoBox: {
+    width: 64, height: 64, borderRadius: 16,
     justifyContent: 'center', alignItems: 'center', marginBottom: 16,
   },
-  logoInner: {
-    width: '100%', height: '100%', borderRadius: 23,
-    backgroundColor: 'rgba(0,0,0,0.28)',
-    justifyContent: 'center', alignItems: 'center',
-  },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
-  brand: { fontSize: 30, fontWeight: '900', color: MED.text, letterSpacing: -0.5 },
-  medBadge: {
-    borderWidth: 1, borderRadius: 8, paddingHorizontal: 7, paddingVertical: 2,
-  },
-  medBadgeText: { fontSize: 10, fontWeight: '900', letterSpacing: 1 },
-  tagline: { fontSize: 13, color: MED.textDim, fontWeight: '600', letterSpacing: 0.3 },
+  brandTitle: { fontSize: 28, fontWeight: '800', color: '#0f172a' },
+  brandSubtitle: { fontSize: 13, color: '#64748b', fontWeight: '500', marginTop: 4 },
 
-  /* ── Tabs ── */
-  tabsRow: { flexDirection: 'row', gap: 6, marginBottom: 16 },
-  tab: {
-    flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 14,
-    borderWidth: 1.5, borderColor: MED.border, backgroundColor: MED.surface,
-    gap: 3, overflow: 'hidden',
-  },
-  tabLabel: { fontSize: 10, fontWeight: '800', color: MED.textDim, letterSpacing: 0.3 },
-  tabDot: { width: 4, height: 4, borderRadius: 2, marginTop: 1 },
-
-  /* ── Card ── */
   card: {
-    backgroundColor: MED.surface,
-    borderRadius: 28,
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 20,
     borderWidth: 1,
-    borderColor: MED.border,
-    overflow: 'hidden',
-    paddingBottom: 24,
+    borderColor: '#e2e8f0',
+    boxShadow: '0px 4px 20px rgba(0,0,0,0.05)',
+    elevation: 3,
   },
-  cardTopBar: { height: 3, marginBottom: 20 },
-  cardHeader: {
-    flexDirection: 'row', alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    paddingHorizontal: 22,
+  
+  tabsContainer: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24,
   },
-  cardTitle: { fontSize: 24, fontWeight: '800', color: MED.text, marginBottom: 2 },
-  cardSub: { fontSize: 13, fontWeight: '700' },
-  roleChip: {
-    flexDirection: 'row', alignItems: 'center', gap: 5,
-    borderWidth: 1, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5,
+  tab: {
+    flex: 1, minWidth: '40%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+    paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: '#e2e8f0', backgroundColor: '#f8fafc',
   },
-  roleChipText: { fontSize: 11, fontWeight: '800' },
+  tabText: { fontSize: 12, fontWeight: '600', color: '#64748b' },
 
-  /* ── Fields ── */
-  field: { marginBottom: 14, paddingHorizontal: 22 },
-  fieldLabel: { fontSize: 10, fontWeight: '800', letterSpacing: 1, marginBottom: 8, marginLeft: 2 },
-  inputWrap: {
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: MED.card, borderRadius: 16, height: 54,
-    paddingHorizontal: 16, gap: 12,
-    borderWidth: 1.5, borderColor: MED.border,
-  },
-  input: { flex: 1, color: MED.text, fontSize: 15, fontWeight: '600' },
+  loginTitle: { fontSize: 22, fontWeight: '700', color: '#0f172a', marginBottom: 20 },
 
-  hintRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 24, marginBottom: 6,
+  inputContainer: { marginBottom: 16 },
+  inputLabel: { fontSize: 11, fontWeight: '700', color: '#64748b', marginBottom: 6, marginLeft: 2 },
+  inputBox: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: '#f8fafc', borderRadius: 12, height: 52, paddingHorizontal: 14,
+    borderWidth: 1.5, borderColor: '#e2e8f0',
   },
-  hint: { fontSize: 11, color: MED.textDim, fontWeight: '500' },
+  input: { flex: 1, fontSize: 15, color: '#0f172a', fontWeight: '500' },
 
-  /* ── Error ── */
   errorBox: {
-    marginHorizontal: 22, marginVertical: 8,
-    backgroundColor: '#ef444418', borderRadius: 12,
-    paddingHorizontal: 14, paddingVertical: 10,
-    borderWidth: 1, borderColor: '#ef444435',
+    backgroundColor: '#fef2f2', borderRadius: 8, padding: 12, marginBottom: 16,
+    borderWidth: 1, borderColor: '#fca5a5',
   },
-  errorText: { color: MED.error, fontSize: 13, fontWeight: '700', textAlign: 'center' },
+  errorText: { color: '#ef4444', fontSize: 13, fontWeight: '600', textAlign: 'center' },
 
-  /* ── Button ── */
-  btnWrap: { marginHorizontal: 22, marginTop: 18, borderRadius: 18, overflow: 'hidden' },
-  btn: { height: 58, justifyContent: 'center', alignItems: 'center' },
-  btnRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  btnText: { color: '#fff', fontSize: 16, fontWeight: '800', letterSpacing: 0.2 },
+  btnWrapper: { borderRadius: 14, overflow: 'hidden', marginTop: 10 },
+  btn: { height: 56, justifyContent: 'center', alignItems: 'center' },
+  btnRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  btnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 
-  /* ── Footer ── */
-  footer: {
-    flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'center', gap: 8, marginTop: 24,
-  },
-  footerDot: { width: 5, height: 5, borderRadius: 2.5 },
-  footerText: { fontSize: 11, color: MED.border, fontWeight: '700', letterSpacing: 0.4 },
+  footer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 32 },
+  footerText: { color: '#94a3b8', fontSize: 12, fontWeight: '500' },
 });
